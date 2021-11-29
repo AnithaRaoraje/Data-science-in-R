@@ -1,0 +1,106 @@
+#-------------------------------------------------------------------------------
+# Read csv file into R
+
+city_temp <- read.csv('city_temperature.csv',stringsAsFactors = T)
+cust_churn <- read.csv('customer_churn.csv',stringsAsFactors = T)
+placement_data <- read.csv('Placement_Data_Full_Class.csv' ,stringsAsFactors = T)
+pharma_data <- read.csv('Pharmacovigilance_audit_Data.csv',stringsAsFactors = T)
+
+
+library(ggplot2)
+library(dplyr)
+library(caTools)
+
+#-------------------------------------------------------------------------------
+# 1. After splitting the data frame into train and test sets, build a multiple 
+# logistic model on top of the train set for the city_temperature data frame. 
+
+
+split_temp <- sample.split(city_temp$Region,SplitRatio = 0.70)
+
+train_temp <- subset(city_temp,split_temp == T)
+
+test_temp <- subset(city_temp,split_temp == F)
+
+
+# a. For this model, take AvgTemperature, Day, Month, and Year as the 
+# independent variable and Region as the dependent variable. 
+
+
+model_temp <- glm(Region ~ AvgTemperature+Day+Month+Year,
+                  data=train_temp,
+                  family = 'binomial')
+
+summary(model_temp)
+
+
+# b. Check the significance of the features that you have selected for the model. 
+
+predict_temp <- predict(model_temp,newdata = test_temp,type = 'response')
+
+View(as.data.frame(predict_temp))
+
+range(predict_temp)
+
+#-------------------------------------------------------------------------------
+# 2. After splitting the data frame into train and test sets, build a multiple logistic model 
+# on top of the train set for the Customer_Churn data frame. 
+
+
+split_churn <- sample.split(cust_churn$Churn,SplitRatio = 0.80)
+
+train_churn <- subset(cust_churn,split_churn == T)
+
+test_churn <- subset(cust_churn,split_churn == F)
+
+
+# a. For this model, take tenure, Streaming TV, Monthly Charges, and Total Charges 
+# as the independent variable and Churn as dependent variable. 
+
+model_churn <- glm(Churn ~ MonthlyCharges+tenure+StreamingTV+TotalCharges,
+                   data=train_churn,
+                   family = 'binomial')
+
+summary(model_churn)
+
+
+# b. Check the significance of the features that you have selected for the model. 
+
+
+predict_churn <- predict(model_churn,newdata = test_churn,type = 'response')
+
+View(as.data.frame(predict_churn))
+
+range(predict_test_churn,na.rm = T)
+
+
+#-------------------------------------------------------------------------------
+# 3. After splitting the data frame into train and test sets, build a multiple logistic model 
+# on top of the train set for the Pharmacovigilance_audit_Data data frame. 
+
+
+split_pharma <- sample.split(pharma_data$DrugID,SplitRatio = 0.75)
+
+train_pharma <- subset(pharma_data,split_pharma == T)
+
+test_pharma <- subset(pharma_data,split_pharma == F)
+
+
+# a. For this model, take Gender, Age, and Patient_Id as independent variable and 
+# DrugId as dependent variable. 
+
+model_pharma <- glm(DrugID ~ Age+Gender+PatientID,
+                    data = train_pharma,
+                    family = 'binomial')
+
+summary(model_pharma)
+
+
+# b. Check the significance of the features that you have selected for the model.
+
+
+predict_pharma <- predict(model_pharma,newdata = test_pharma,type = 'response')
+
+View(as.data.frame(predict_pharma))
+
+range(predict_pharma)
